@@ -22,19 +22,19 @@ from opencensus.trace.tracer import Tracer
 
 # Logging
 logger = logging.getLogger(__name__)
-handler = AzureLogHandler(connection_string='InstrumentationKey=aaf25604-de83-40f1-be10-3df067c2ab2d;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/')
+handler = AzureLogHandler(connection_string='InstrumentationKey=92601402-5459-43f4-83e2-e7d087e4c91a;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/')
 logger.addHandler(handler)
 logger.setLevel(logging.INFO)
 
 # Metrics
 exporter = metrics_exporter.new_metrics_exporter(
   enable_standard_metrics=True,
-  connection_string='InstrumentationKey=aaf25604-de83-40f1-be10-3df067c2ab2d;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/')
+  connection_string='InstrumentationKey=92601402-5459-43f4-83e2-e7d087e4c91a;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/')
 
 # Tracing
 tracer = Tracer(
     exporter=AzureExporter(
-        connection_string='InstrumentationKey=aaf25604-de83-40f1-be10-3df067c2ab2d;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/'),
+        connection_string='InstrumentationKey=92601402-5459-43f4-83e2-e7d087e4c91a;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/'),
     sampler=ProbabilitySampler(1.0),
 )
 
@@ -43,7 +43,7 @@ app = Flask(__name__)
 # Requests
 middleware = FlaskMiddleware(
     app,
-    exporter=AzureExporter(connection_string="InstrumentationKey=aaf25604-de83-40f1-be10-3df067c2ab2d;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"),
+    exporter=AzureExporter(connection_string="InstrumentationKey=92601402-5459-43f4-83e2-e7d087e4c91a;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"),
     sampler=ProbabilitySampler(rate=1.0),
 )
 # Load configurations from environment or config file
@@ -99,11 +99,11 @@ def index():
             r.set(button2,0)
             vote1 = r.get(button1).decode('utf-8')
             properties = {'custom_dimensions': {'Cats Vote': vote1}}
-            logger.info('cat vote', extra=properties)
+            logger.info('Kat vote', extra=properties)
 
             vote2 = r.get(button2).decode('utf-8')
             properties = {'custom_dimensions': {'Dogs Vote': vote2}}
-            logger.info('dog vote', extra=properties)
+            logger.info('Dog K vote', extra=properties)
 
             return render_template("index.html", value1=int(vote1), value2=int(vote2), button1=button1, button2=button2, title=title)
 
