@@ -46,6 +46,7 @@ middleware = FlaskMiddleware(
     exporter=AzureExporter(connection_string="InstrumentationKey=92601402-5459-43f4-83e2-e7d087e4c91a;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"),
     sampler=ProbabilitySampler(rate=1.0),
 )
+
 # Load configurations from environment or config file
 app.config.from_pyfile('config_file.cfg')
 
@@ -80,12 +81,12 @@ def index():
 
     if request.method == 'GET':
 
-         # Get current values
+        # Get current values
         vote1 = r.get(button1).decode('utf-8')
-        tracer.span(name="Cats_K_vote")
+        tracer.span(name="Cats_vote")
             
         vote2 = r.get(button2).decode('utf-8')
-        tracer.span(name="Dogs_V_vote")
+        tracer.span(name="Dogs_vote")
             
         # Return index with values
         return render_template("index.html", value1=int(vote1), value2=int(vote2), button1=button1, button2=button2, title=title)
@@ -99,12 +100,12 @@ def index():
             r.set(button2,0)
             vote1 = r.get(button1).decode('utf-8')
             properties = {'custom_dimensions': {'Cats Vote': vote1}}
-            logger.info('Kat vote', extra=properties)
+            logger.info('cat vote', extra=properties)
 
             vote2 = r.get(button2).decode('utf-8')
             properties = {'custom_dimensions': {'Dogs Vote': vote2}}
-            logger.info('Dog K vote', extra=properties)
-
+            logger.info('dog vote', extra=properties)
+            
             return render_template("index.html", value1=int(vote1), value2=int(vote2), button1=button1, button2=button2, title=title)
 
         else:
@@ -112,6 +113,12 @@ def index():
             # Insert vote result into DB
             vote = request.form['vote']
             r.incr(vote,1)
+            
+            vote0 = r.get(vote).decode('utf-8')
+            
+            # log current vote
+            properties = {'custom_dimensions': {'{}_vote'.format(vote): vote0}}
+            logger.info('new_{}_vote'.format(vote), extra=properties)
 
             # Get current values
             vote1 = r.get(button1).decode('utf-8')
@@ -121,7 +128,7 @@ def index():
             return render_template("index.html", value1=int(vote1), value2=int(vote2), button1=button1, button2=button2, title=title)
 
 if __name__ == "__main__":
-    # TODO: Use the statement below when running locally
-    # app.run() 
-    # TODO: Use the statement below before deployment to VMSS
+    # comment line below when deploying to VMSS
+    # app.run() # local
+    # uncomment the line below before deployment to VMSS
     app.run(host='0.0.0.0', threaded=True, debug=True) # remote
